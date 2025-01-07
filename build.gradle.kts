@@ -9,6 +9,8 @@ plugins {
 group = "dev.himitery"
 version = "1.0.0"
 
+val kotestVersion = "5.9.1"
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
@@ -30,7 +32,7 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
-    
+
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 
     runtimeOnly("org.postgresql:postgresql")
@@ -41,6 +43,10 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:postgresql")
+    testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
+    testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
+    testImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
+    testImplementation("io.kotest.extensions:kotest-extensions-testcontainers:2.0.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

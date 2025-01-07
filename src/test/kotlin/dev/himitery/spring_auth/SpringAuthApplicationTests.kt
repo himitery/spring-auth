@@ -11,5 +11,4 @@ class SpringAuthApplicationTests {
     @Test
     fun contextLoads() {
     }
-
 }
