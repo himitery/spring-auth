@@ -1,14 +1,14 @@
 package dev.himitery.spring_auth
 
-import org.junit.jupiter.api.Test
+import dev.himitery.spring_auth.config.TestcontainersConfig
+import io.kotest.core.spec.style.FunSpec
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 
-@Import(TestcontainersConfiguration::class)
-@SpringBootTest
-class SpringAuthApplicationTests {
+@Import(TestcontainersConfig::class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class SpringAuthApplicationTests : FunSpec({
 
-    @Test
-    fun contextLoads() {
+    test("context loads") {
     }
-}
+})

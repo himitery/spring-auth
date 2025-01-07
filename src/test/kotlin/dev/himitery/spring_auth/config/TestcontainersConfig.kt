@@ -1,4 +1,4 @@
-package dev.himitery.spring_auth
+package dev.himitery.spring_auth.config
 
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection
@@ -8,7 +8,7 @@ import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.utility.DockerImageName
 
 @TestConfiguration(proxyBeanMethods = false)
-class TestcontainersConfiguration {
+class TestcontainersConfig {
 
     @Bean
     @ServiceConnection
@@ -23,7 +23,8 @@ class TestcontainersConfiguration {
     @Bean
     @ServiceConnection(name = "redis")
     fun redisContainer(): GenericContainer<*> {
-        return GenericContainer(DockerImageName.parse("redis:latest")).withExposedPorts(6379)
+        return GenericContainer(DockerImageName.parse("redis:latest")).apply {
+            withExposedPorts(6379)
+        }
     }
-
 }
