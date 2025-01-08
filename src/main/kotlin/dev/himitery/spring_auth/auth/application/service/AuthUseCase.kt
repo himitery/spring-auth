@@ -4,4 +4,5 @@ import dev.himitery.spring_auth.auth.domain.model.Auth
 
 interface AuthUseCase {
     fun save(auth: Auth): Auth
+    fun findById(id: String): Auth?
 }

@@ -9,4 +9,8 @@ class AuthPersistenceAdapter(private val repository: AuthRepository) : AuthPersi
     override fun save(auth: Auth): Auth {
         return repository.save(auth)
     }
+
+    override fun findById(id: String): Auth? {
+        return repository.findById(id).orElse(null)
+    }
 }

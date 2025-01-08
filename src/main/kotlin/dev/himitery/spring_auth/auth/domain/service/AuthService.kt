@@ -10,4 +10,8 @@ class AuthService(private val persistencePort: AuthPersistencePort) : AuthUseCas
     override fun save(auth: Auth): Auth {
         return persistencePort.save(auth)
     }
+
+    override fun findById(id: String): Auth? {
+        return persistencePort.findById(id)
+    }
 }
