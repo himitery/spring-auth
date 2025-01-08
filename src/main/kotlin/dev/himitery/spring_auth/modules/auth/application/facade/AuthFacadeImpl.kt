@@ -1,12 +1,10 @@
 package dev.himitery.spring_auth.modules.auth.application.facade
 
 import dev.himitery.spring_auth.modules.auth.application.port.`in`.AuthFacade
-import dev.himitery.spring_auth.modules.auth.application.port.`in`.dto.ReissueCommand
-import dev.himitery.spring_auth.modules.auth.application.port.`in`.dto.SignInCommand
-import dev.himitery.spring_auth.modules.auth.application.port.`in`.dto.SignUpCommand
-import dev.himitery.spring_auth.modules.auth.application.port.`in`.dto.TokenResponse
+import dev.himitery.spring_auth.modules.auth.application.port.`in`.dto.*
 import dev.himitery.spring_auth.modules.auth.application.service.AuthUseCase
 import dev.himitery.spring_auth.modules.auth.application.service.GenerateTokenUseCase
+import dev.himitery.spring_auth.modules.auth.application.service.InvalidateTokenUseCase
 import dev.himitery.spring_auth.modules.auth.application.service.ValidateTokenUseCase
 import dev.himitery.spring_auth.modules.auth.domain.exception.InvalidTokenException
 import dev.himitery.spring_auth.modules.auth.domain.exception.LoginIdNotFoundException
@@ -23,7 +21,8 @@ class AuthFacadeImpl(
     private val passwordEncoder: PasswordEncoder,
     private val authUseCase: AuthUseCase,
     private val validateTokenUseCase: ValidateTokenUseCase,
-    private val generateTokenUseCase: GenerateTokenUseCase
+    private val generateTokenUseCase: GenerateTokenUseCase,
+    private val invalidateTokenUseCase: InvalidateTokenUseCase
 ) : AuthFacade {
 
     override fun signIn(command: SignInCommand): TokenResponse {
@@ -56,6 +55,10 @@ class AuthFacadeImpl(
         }
 
         return generateTokenResponse(authId)
+    }
+
+    override fun signOut(command: SignOutCommand) {
+        invalidateTokenUseCase.invalidateRefreshToken(command.refreshToken)
     }
 
     private fun encryptPassword(password: String): String {

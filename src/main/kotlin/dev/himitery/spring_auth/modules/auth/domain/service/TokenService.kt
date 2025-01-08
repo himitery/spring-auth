@@ -2,6 +2,7 @@ package dev.himitery.spring_auth.modules.auth.domain.service
 
 import dev.himitery.spring_auth.modules.auth.application.port.out.TokenCachePort
 import dev.himitery.spring_auth.modules.auth.application.service.GenerateTokenUseCase
+import dev.himitery.spring_auth.modules.auth.application.service.InvalidateTokenUseCase
 import dev.himitery.spring_auth.modules.auth.application.service.ValidateTokenUseCase
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
@@ -18,7 +19,7 @@ class TokenService(
     private val jwtAccessTokenExpiration: Long,
     private val jwtRefreshTokenExpiration: Long,
     private val tokenCachePort: TokenCachePort
-) : ValidateTokenUseCase, GenerateTokenUseCase {
+) : ValidateTokenUseCase, GenerateTokenUseCase, InvalidateTokenUseCase {
 
     private val signKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecretKey))
     private val jwtParser = Jwts.parser().verifyWith(signKey).build()
@@ -90,5 +91,9 @@ class TokenService(
 
     private fun dateToMillis(date: LocalDateTime): Long {
         return date.toInstant(ZoneOffset.UTC).toEpochMilli()
+    }
+
+    override fun invalidateRefreshToken(refreshToken: String) {
+        tokenCachePort.deleteRefreshToken(refreshToken)
     }
 }

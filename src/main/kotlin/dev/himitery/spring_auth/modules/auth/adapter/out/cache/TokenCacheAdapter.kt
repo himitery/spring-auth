@@ -5,7 +5,9 @@ import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Component
 
 @Component
-class TokenCacheAdapter(private val redisTemplate: RedisTemplate<String, Any>) : TokenCachePort {
+class TokenCacheAdapter(
+    private val redisTemplate: RedisTemplate<String, Any>
+) : TokenCachePort {
     override fun saveRefreshToken(refreshToken: String, userId: String) {
         redisTemplate.opsForValue().set(refreshToken, userId)
     }
@@ -14,5 +16,9 @@ class TokenCacheAdapter(private val redisTemplate: RedisTemplate<String, Any>) :
         return redisTemplate.opsForValue().get(refreshToken)?.let {
             return it.toString()
         }
+    }
+
+    override fun deleteRefreshToken(refreshToken: String) {
+        redisTemplate.delete(refreshToken)
     }
 }

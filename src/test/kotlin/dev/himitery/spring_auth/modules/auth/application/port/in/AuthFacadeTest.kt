@@ -1,9 +1,7 @@
 package dev.himitery.spring_auth.modules.auth.application.port.`in`
 
-import dev.himitery.spring_auth.modules.auth.application.port.`in`.dto.ReissueCommand
-import dev.himitery.spring_auth.modules.auth.application.port.`in`.dto.SignInCommand
-import dev.himitery.spring_auth.modules.auth.application.port.`in`.dto.SignUpCommand
-import dev.himitery.spring_auth.modules.auth.application.port.`in`.dto.TokenResponse
+import dev.himitery.spring_auth.modules.auth.application.port.`in`.dto.*
+import dev.himitery.spring_auth.modules.auth.domain.exception.InvalidTokenException
 import dev.himitery.spring_auth.modules.auth.domain.exception.LoginIdNotFoundException
 import dev.himitery.spring_auth.modules.auth.domain.exception.PasswordMismatchException
 import dev.himitery.spring_auth.shared.config.TestcontainersConfig
@@ -137,5 +135,25 @@ class AuthFacadeTest(facade: AuthFacade) : FunSpec({
             },
             datetime.plusMinutes(1),
         )
+    }
+
+    test("Can sign out") {
+        // given
+        val token = signUp()
+        val signOutCommand = SignOutCommand(
+            refreshToken = token.refreshToken
+        )
+
+        // when
+        facade.signOut(signOutCommand)
+
+        // then
+        shouldThrow<InvalidTokenException> {
+            val command = ReissueCommand(
+                accessToken = token.accessToken,
+                refreshToken = token.refreshToken
+            )
+            facade.reissue(command)
+        }
     }
 })
