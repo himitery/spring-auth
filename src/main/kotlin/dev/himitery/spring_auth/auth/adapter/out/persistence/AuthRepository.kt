@@ -4,4 +4,4 @@ import dev.himitery.spring_auth.auth.domain.model.Auth
 import org.springframework.data.jpa.repository.JpaRepository
 
 
-interface AuthRepository : JpaRepository<Auth, Long>
+interface AuthRepository : JpaRepository<Auth, String>

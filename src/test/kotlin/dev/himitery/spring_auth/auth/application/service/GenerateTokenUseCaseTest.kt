@@ -19,7 +19,7 @@ class GenerateTokenUseCaseTest(
     FunSpec({
         test("Can generate Access Token") {
             // given
-            val userId = 0L
+            val userId = "test_id"
             val datetime = LocalDateTime.now()
 
             // when
@@ -32,7 +32,7 @@ class GenerateTokenUseCaseTest(
 
         test("Can generate Refresh Token") {
             // given
-            val userId = 0L
+            val userId = "test_id"
             val datetime = LocalDateTime.now()
 
             // when
@@ -45,7 +45,7 @@ class GenerateTokenUseCaseTest(
 
         test("Refresh Token saved in cache when generated") {
             // given
-            val userId = 0L
+            val userId = "test_id"
             val datetime = LocalDateTime.now()
             val refreshToken = useCase.generateRefreshToken(datetime, userId)
 

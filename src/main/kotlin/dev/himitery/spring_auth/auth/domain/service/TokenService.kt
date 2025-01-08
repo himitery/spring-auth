@@ -23,14 +23,14 @@ class TokenService(
     private val signKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecretKey))
     private val jwtParser = Jwts.parser().verifyWith(signKey).build()
 
-    override fun parseAccessToken(token: String): Long? {
+    override fun parseAccessToken(token: String): String? {
         return try {
             val payload = jwtParser.parseSignedClaims(token).payload
             if (payload.expiration.before(Date())) {
                 return null
             }
 
-            payload.subject.toLong()
+            payload.subject
         } catch (e: JwtException) {
             null
         } catch (e: IllegalArgumentException) {
@@ -38,12 +38,11 @@ class TokenService(
         }
     }
 
-    override fun parseAccessTokenWithExpired(token: String): Long? {
+    override fun parseAccessTokenWithExpired(token: String): String? {
         return try {
             return jwtParser.parseSignedClaims(token)
                 .payload
                 .subject
-                .toLong()
         } catch (e: JwtException) {
             null
         } catch (e: IllegalArgumentException) {
@@ -51,7 +50,7 @@ class TokenService(
         }
     }
 
-    override fun isRefreshTokenValid(token: String, userId: Long): Boolean {
+    override fun isRefreshTokenValid(token: String, userId: String): Boolean {
         return try {
             val isNotExpired = jwtParser.parseSignedClaims(token)
                 .payload
@@ -66,7 +65,7 @@ class TokenService(
         }
     }
 
-    override fun generateAccessToken(datetime: LocalDateTime, userId: Long): String {
+    override fun generateAccessToken(datetime: LocalDateTime, userId: String): String {
         return Jwts.builder()
             .subject(userId.toString())
             .expiration(Date(dateToMillis(datetime) + jwtAccessTokenExpiration))
@@ -74,7 +73,7 @@ class TokenService(
             .compact()
     }
 
-    override fun generateRefreshToken(datetime: LocalDateTime, userId: Long): String {
+    override fun generateRefreshToken(datetime: LocalDateTime, userId: String): String {
         val token = Jwts.builder()
             .expiration(Date(dateToMillis(datetime) + jwtRefreshTokenExpiration))
             .signWith(signKey)
@@ -85,7 +84,7 @@ class TokenService(
         return token
     }
 
-    private fun saveRefreshToken(token: String, userId: Long) {
+    private fun saveRefreshToken(token: String, userId: String) {
         tokenCachePort.saveRefreshToken(token, userId)
     }
 

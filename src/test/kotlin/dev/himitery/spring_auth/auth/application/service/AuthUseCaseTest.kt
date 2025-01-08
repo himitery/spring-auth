@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Import
 class AuthUseCaseTest(private val useCase: AuthUseCase) : FunSpec({
     test("Can save auth") {
         // given
-        val auth = Auth("test_user")
+        val auth = Auth("test_id", "test_password", "test_username")
 
         // when
         val saved = useCase.save(auth)

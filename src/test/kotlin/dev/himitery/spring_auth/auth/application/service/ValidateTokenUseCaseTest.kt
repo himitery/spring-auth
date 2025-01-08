@@ -18,7 +18,7 @@ class ValidateTokenUseCaseTest(
 
     test("Can parse Access Token when not expired") {
         // given
-        val userId = 0L
+        val userId = "test_id"
         val datetime = LocalDateTime.now()
         val accessToken = generateTokenUseCase.generateAccessToken(datetime, userId)
 
@@ -32,7 +32,7 @@ class ValidateTokenUseCaseTest(
 
     test("Can't parse Access Token when expired without option") {
         // given
-        val userId = 0L
+        val userId = "test_id"
         val datetime = LocalDateTime.now().minusYears(10)
         val accessToken = generateTokenUseCase.generateAccessToken(datetime, userId)
 
@@ -45,7 +45,7 @@ class ValidateTokenUseCaseTest(
 
     test("Can parse Access Token with expired option") {
         // given
-        val userId = 0L
+        val userId = "test_id"
         val datetime = LocalDateTime.now()
         val accessToken = generateTokenUseCase.generateAccessToken(datetime, userId)
 
@@ -59,7 +59,7 @@ class ValidateTokenUseCaseTest(
 
     test("Can valid Refresh Token when not expired") {
         // given
-        val userId = 0L
+        val userId = "test_id"
         val datetime = LocalDateTime.now()
         val refreshToken = generateTokenUseCase.generateRefreshToken(datetime, userId)
 
@@ -72,7 +72,7 @@ class ValidateTokenUseCaseTest(
 
     test("Can't valid Refresh Token when expired") {
         // given
-        val userId = 0L
+        val userId = "test_id"
         val datetime = LocalDateTime.now().minusYears(10)
         val refreshToken = generateTokenUseCase.generateRefreshToken(datetime, userId)
 
@@ -85,7 +85,7 @@ class ValidateTokenUseCaseTest(
 
     test("Can't valid Refresh Token when userId is different") {
         // given
-        val userId = 0L
+        val userId = "test_id"
         val datetime = LocalDateTime.now()
         val refreshToken = generateTokenUseCase.generateRefreshToken(datetime, userId)
 

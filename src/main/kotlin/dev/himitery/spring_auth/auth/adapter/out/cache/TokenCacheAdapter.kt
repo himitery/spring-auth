@@ -6,13 +6,13 @@ import org.springframework.stereotype.Component
 
 @Component
 class TokenCacheAdapter(private val redisTemplate: RedisTemplate<String, Any>) : TokenCachePort {
-    override fun saveRefreshToken(refreshToken: String, userId: Long) {
+    override fun saveRefreshToken(refreshToken: String, userId: String) {
         redisTemplate.opsForValue().set(refreshToken, userId)
     }
 
-    override fun findByRefreshToken(refreshToken: String): Long? {
+    override fun findByRefreshToken(refreshToken: String): String? {
         return redisTemplate.opsForValue().get(refreshToken)?.let {
-            return it.toString().toLong()
+            return it.toString()
         }
     }
 }
