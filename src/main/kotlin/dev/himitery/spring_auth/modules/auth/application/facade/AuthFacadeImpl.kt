@@ -1,11 +1,14 @@
 package dev.himitery.spring_auth.modules.auth.application.facade
 
 import dev.himitery.spring_auth.modules.auth.application.port.`in`.AuthFacade
+import dev.himitery.spring_auth.modules.auth.application.port.`in`.dto.ReissueCommand
 import dev.himitery.spring_auth.modules.auth.application.port.`in`.dto.SignInCommand
 import dev.himitery.spring_auth.modules.auth.application.port.`in`.dto.SignUpCommand
 import dev.himitery.spring_auth.modules.auth.application.port.`in`.dto.TokenResponse
 import dev.himitery.spring_auth.modules.auth.application.service.AuthUseCase
 import dev.himitery.spring_auth.modules.auth.application.service.GenerateTokenUseCase
+import dev.himitery.spring_auth.modules.auth.application.service.ValidateTokenUseCase
+import dev.himitery.spring_auth.modules.auth.domain.exception.InvalidTokenException
 import dev.himitery.spring_auth.modules.auth.domain.exception.LoginIdNotFoundException
 import dev.himitery.spring_auth.modules.auth.domain.exception.PasswordMismatchException
 import dev.himitery.spring_auth.modules.auth.domain.model.Auth
@@ -19,18 +22,17 @@ import java.time.LocalDateTime
 class AuthFacadeImpl(
     private val passwordEncoder: PasswordEncoder,
     private val authUseCase: AuthUseCase,
-    private val validateTokenUseCase: GenerateTokenUseCase,
+    private val validateTokenUseCase: ValidateTokenUseCase,
     private val generateTokenUseCase: GenerateTokenUseCase
 ) : AuthFacade {
 
-    @Transactional
     override fun signIn(command: SignInCommand): TokenResponse {
         val auth = authUseCase.findById(command.id) ?: throw LoginIdNotFoundException()
         if (!isPasswordValid(auth, command.password)) {
             throw PasswordMismatchException()
         }
 
-        return generateTokenResponse(auth)
+        return generateTokenResponse(auth.id)
     }
 
     @Transactional
@@ -43,7 +45,17 @@ class AuthFacadeImpl(
             )
         )
 
-        return generateTokenResponse(auth)
+        return generateTokenResponse(auth.id)
+    }
+
+    override fun reissue(command: ReissueCommand): TokenResponse {
+        val authId = validateTokenUseCase.parseAccessTokenWithExpired(command.accessToken)
+            ?: throw InvalidTokenException()
+        if (!validateTokenUseCase.isRefreshTokenValid(command.refreshToken, authId)) {
+            throw InvalidTokenException()
+        }
+
+        return generateTokenResponse(authId)
     }
 
     private fun encryptPassword(password: String): String {
@@ -54,15 +66,15 @@ class AuthFacadeImpl(
         return passwordEncoder.matches(password, auth.password)
     }
 
-    private fun generateTokenResponse(auth: Auth): TokenResponse {
+    private fun generateTokenResponse(authId: String): TokenResponse {
         val datetime = LocalDateTime.now()
         val accessToken = generateTokenUseCase.generateAccessToken(
             datetime = datetime,
-            userId = auth.id
+            userId = authId
         )
         val refreshToken = generateTokenUseCase.generateRefreshToken(
             datetime = datetime,
-            userId = auth.id
+            userId = authId
         )
 
         return TokenResponse(
