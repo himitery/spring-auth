@@ -1,5 +1,6 @@
 package dev.himitery.spring_auth.shared.config
 
+import dev.himitery.spring_auth.shared.filter.SecurityFilter
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
@@ -14,9 +15,11 @@ class SwaggerConfig {
     fun openAPI(): OpenAPI {
         return OpenAPI().apply {
             components = Components().apply {
-                addSecuritySchemes("Authentication", SecurityScheme().apply {
-                    type = SecurityScheme.Type.HTTP
-                    scheme = "bearer"
+                addSecuritySchemes(SecurityFilter.AUTHORIZATION_HEADER, SecurityScheme().apply {
+                    type = SecurityScheme.Type.APIKEY
+                    `in` = SecurityScheme.In.HEADER
+                    name = SecurityFilter.AUTHORIZATION_HEADER
+                    scheme = "Bearer"
                     bearerFormat = "JWT"
                 })
             }
